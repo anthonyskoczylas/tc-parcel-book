@@ -96,7 +96,7 @@ section{padding:40px 0}
 /* ---- buttons ---- */
 .btn{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:12px;
   text-decoration:none;border:1px solid var(--line);background:var(--paper);color:var(--ink);
-  padding:6px 11px;border-radius:3px;transition:background .12s,border-color .12s;cursor:pointer}
+  padding:6px 11px;border-radius:3px;transition:background .12s,border-color .12s;cursor:pointer;white-space:nowrap}
 .btn:hover{border-color:var(--bay);background:var(--bay-soft);color:var(--bay)}
 .btn.call{border-color:var(--bay);color:var(--bay);background:var(--bay-soft);font-weight:600}
 .btn.call:hover{background:var(--bay);color:var(--card)}
@@ -117,8 +117,16 @@ input[type=search]{min-width:210px;flex:1 1 210px}
 .count{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);letter-spacing:.06em}
 
 /* ---- table ---- */
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-top:0;background:var(--card)}
-table{border-collapse:collapse;width:100%;min-width:880px}
+.tablewrap{border:1px solid var(--line);border-top:0;background:var(--card)}
+/* only the narrow desktop band needs a horizontal scroller; making the wrapper a
+   scroll container at any width would re-anchor the sticky thead to it */
+@media (min-width:761px) and (max-width:960px){
+  .tablewrap{overflow-x:auto}
+  /* inside a scroll container the sticky offset is measured from the container,
+     so 58px would push the header down onto row 1 */
+  .tablewrap thead th{top:0}
+}
+table{border-collapse:collapse;width:100%;min-width:0}
 thead th{position:sticky;top:58px;z-index:10;background:var(--card);text-align:left;
   font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
   color:var(--ink-3);font-weight:500;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap}
@@ -191,9 +199,12 @@ footer .mono{font-size:11.5px;letter-spacing:.05em}
 @media (max-width:760px){
   .wrap{padding:0 14px}
   .mast{padding:24px 0 16px;gap:18px}
-  .tallies{width:100%}
-  .tally{flex:1;min-width:0;padding:9px 11px}
-  .tally b{font-size:19px}
+  /* five tallies will not fit on one phone row without clipping the labels */
+  .tallies{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+  .tally{border-right:0;background:var(--paper);padding:9px 10px;min-width:0}
+  .tally:last-child{grid-column:span 2}
+  .tally b{font-size:20px}
+  .tally span{font-size:9.5px;letter-spacing:.05em;white-space:normal}
   .brief{padding-bottom:20px}
   section{padding:30px 0}
   .picks{grid-template-columns:1fr}
@@ -213,19 +224,20 @@ footer .mono{font-size:11.5px;letter-spacing:.05em}
     padding:14px 15px;margin-bottom:10px;box-shadow:var(--shadow)}
   tbody tr:hover{background:var(--card)}
   td{display:block;padding:0;border:0}
+  /* seven cells: property / road / drive / acres / price / who / called */
   td:nth-child(4){flex:1 1 100%;order:1}
-  td:nth-child(1){order:2}
-  td:nth-child(2){order:3}
-  td:nth-child(3){order:4}
+  td:nth-child(5){order:2}
+  td:nth-child(1){order:3}
+  td:nth-child(2){order:4}
+  td:nth-child(3){order:5}
   td:nth-child(2)::after{content:" acres";color:var(--ink-3);font-size:11px;letter-spacing:.08em}
-  td:nth-child(5){flex:1 1 100%;order:6;border-top:1px solid var(--line-soft);padding-top:11px;
-    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  td:nth-child(6){order:5;margin-left:auto;display:flex;align-items:center;gap:6px}
-  td:nth-child(6)::before{content:"called";font-family:"IBM Plex Mono",monospace;font-size:10px;
+  td:nth-child(7){order:6;margin-left:auto;display:flex;align-items:center;gap:6px}
+  td:nth-child(7)::before{content:"called";font-family:"IBM Plex Mono",monospace;font-size:10px;
     letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+  td:nth-child(6){flex:1 1 100%;order:7;border-top:1px solid var(--line-soft);padding-top:11px}
   .mark{width:20px;height:20px;margin:0}
   .blurb{max-width:none}
-  td:nth-child(5) .btn.call{padding:9px 13px}
+  td:nth-child(6) .btn.call{padding:9px 13px}
   .notes{gap:18px}
   .offgrid{grid-template-columns:1fr}
   h1{font-size:31px}
